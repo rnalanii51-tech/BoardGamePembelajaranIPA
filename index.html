@@ -74,27 +74,6 @@ button{
 
 }
 
-/* PESAN PUTAR HP SAAT MEMBUKA PAPAN */
-#pesanPutarHp {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 9999999;
-    background: #000;
-    color: white;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 30px;
-    font-size: 24px;
-}
-
-@media screen and (max-width: 768px) and (orientation: portrait) {
-    body.papan-aktif #pesanPutarHp {
-        display: flex;
-    }
-}
-
 .halaman button,
 .halaman input,
 .halaman textarea,
@@ -103,20 +82,72 @@ button{
     position:absolute;
     z-index:9999;
 }
+
+/* WADAH GAMBAR KARTU: 16:9, TIDAK MENAMBAH SCROLL */
+.kartu-16-9 {
+    position: relative !important;
+    width: min(92vw, 960px) !important;
+    aspect-ratio: 16 / 9 !important;
+    height: auto !important;
+    max-height: 65vh !important;
+    margin: 0 auto 12px !important;
+    overflow: hidden !important;
+    flex: 0 0 auto !important;
+}
+
+/* GAMBAR MEMENUHI WADAH 16:9 */
+.kartu-16-9 img {
+    position: absolute !important;
+    inset: 0 !important;
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    object-fit: contain !important;
+    margin: 0 !important;
+}
+
+/* ISI POPUP DISUSUN VERTIKAL */
+.popup-kartu-rapi {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: min(96vw, 1020px) !important;
+    max-width: 96vw !important;
+    max-height: 96vh !important;
+    overflow: auto !important;
+    gap: 10px !important;
+    box-sizing: border-box !important;
+}
+
+/* JAWABAN DAN TOMBOL TIDAK BERTUMPUK */
+.popup-kartu-rapi textarea {
+    position: relative !important;
+    width: min(700px, 90vw) !important;
+    min-height: 65px !important;
+    max-height: 100px !important;
+    resize: vertical;
+    box-sizing: border-box !important;
+}
+
+.popup-kartu-rapi button {
+    position: relative !important;
+    flex: 0 0 auto !important;
+}
+
 </style>
 </head>
 
 <body>
 
-<div id="pesanPutarHp">
-    Silakan putar HP ke posisi landscape untuk memainkan permainan.
-</div>
-
 <!-- ================= COVER AWAL ================= -->
 <div id="coverAwal" class="halaman">
 
     <img
-        src="coverAwal.png"
+        src="coverAwal_Landscape.png"
         style="
             width:100%;
             height:100%;
@@ -129,14 +160,7 @@ button{
     <button
         onclick="coverrr()"
         style="
-            position:absolute;
-            top:550px;
-            left:554px;
-            width:170px;
-            height:42px;
-            background:transparent;
-            border:none;
-            cursor:pointer;
+            position:absolute; top:526px; left:520px; width:238px; height:82px; background:transparent; border:none; cursor:pointer;
         ">
     </button>
 
@@ -144,14 +168,7 @@ button{
     <button
         onclick="buka('ManualBook')"
         style="
-            position:absolute;
-            top:496px;
-            left:554px;
-            width:170px;
-            height:42px;
-            background:transparent;
-            border:none;
-            cursor:pointer;
+            position:absolute; top:526px; left:282px; width:238px; height:82px; background:transparent; border:none; cursor:pointer;
         ">
     </button>
 
@@ -159,14 +176,7 @@ button{
     <button
         onclick="bukaHalaman('coverGuru')"
         style="
-            position:absolute;
-            top:604px;
-            left:554px;
-            width:170px;
-            height:42px;
-            background:transparent;
-            border:none;
-            cursor:pointer;
+            position:absolute; top:526px; left:758px; width:238px; height:82px; background:transparent; border:none; cursor:pointer;
         ">
     </button>
 
@@ -192,62 +202,38 @@ function bukaHalaman(){
 
 <!-- COVER -->
 <div id="coverrr" class="halaman">
-    <img src="coverrr.png">
+    <img src="coverrr_Landscape.png">
 
     <!-- TUJUAN PEMBELAJARAN-->
     <button
         onclick="buka('CapaianPembelajaran')"
         style="
-            position:absolute;
-            top:494px;
-            left:554px;
-            width:171px;
-            height:54px;
-            background:transparent;
-            border:none;
-            cursor:pointer;">
+            position:absolute; top:493px; left:474px; width:330px; height:92px; background:transparent; border:none; cursor:pointer;
+        ">
     </button>
     
     <!-- MASUK KELAS -->
     <button
         onclick="buka('masukkelas')"
         style="
-            position:absolute;
-            top:428px;
-            left:554px;
-            width:171px;
-            height:54px;
-            background:transparent;
-            border:none;
-            cursor:pointer;">
+            position:absolute; top:407px; left:474px; width:330px; height:78px; background:transparent; border:none; cursor:pointer;
+        ">
     </button>
 
     <!-- PETUNJUK PENGGUNAANN -->
     <button
         onclick="buka('MateriPd')"
         style="
-            position:absolute;
-            top:560px;
-            left:554px;
-            width:171px;
-            height:54px;
-            background:transparent;
-            border:none;
-            cursor:pointer;">
+            position:absolute; top:587px; left:474px; width:330px; height:90px; background:transparent; border:none; cursor:pointer;
+        ">
     </button>
 
     <!--TOMBOL KEMBALI-->
     <button
         onclick="buka('coverAwal')"
         style="
-            position:absolute;
-            top:637px;
-            left:455px;
-            width:35px;
-            height:35px;
-            background:transparent;
-            border:none;
-            cursor:pointer;">
+            position:absolute; top:600px; left:30px; width:76px; height:76px; background:transparent; border:none; cursor:pointer; z-index:9999;
+        ">
     </button>
 </div>
 
@@ -257,7 +243,7 @@ function bukaHalaman(){
     
     <img
         id="bgMasukKelas"
-        src="MasukKelas6.png"
+        src="MasukKelas6_Landscape.png"
         style="width:100%;height:100%;object-fit:contain;"
     >
     
@@ -280,9 +266,9 @@ function bukaHalaman(){
             placeholder="Masukkan kode kelas"
             style="
                 position: absolute;
-                left: 513px;
-                top: 610px;
-                width: 252px;
+                left: 373px;
+                top: 296px;
+                width: 535px;
                 height: 40px;
                 box-sizing: border-box;
                 border: none;
@@ -302,9 +288,9 @@ function bukaHalaman(){
             placeholder="Masukkan nama anggota (satu nama setiap baris)"
             style="
                 position: absolute;
-                left: 512px;
-                top: 230px;
-                width: 252px;
+                left: 373px;
+                top: 520px;
+                width: 535px;
                 height: 70px;
                 box-sizing: border-box;
                 border: none;
@@ -330,8 +316,8 @@ function bukaHalaman(){
         value="1"
         style="
             position:absolute;
-            top:388px;
-            left:513px;
+            top:399px;
+            left:389px;
             width:31px;
             height:31px;
         "
@@ -345,8 +331,8 @@ function bukaHalaman(){
         value="2"
         style="
             position:absolute;
-            top:388px;
-            left:560px;
+            top:399px;
+            left:485px;
             width:31px;
             height:31px;
         "
@@ -360,8 +346,8 @@ function bukaHalaman(){
         value="3"
         style="
             position:absolute;
-            top:388px;
-            left:606px;
+            top:399px;
+            left:581px;
             width:31px;
             height:31px;
         "
@@ -375,8 +361,8 @@ function bukaHalaman(){
         value="4"
         style="
             position:absolute;
-            top:388px;
-            left:651px;
+            top:399px;
+            left:675px;
             width:31px;
             height:31px;
         "
@@ -390,8 +376,8 @@ function bukaHalaman(){
         value="5"
         style="
             position:absolute;
-            top:388px;
-            left:696px;
+            top:399px;
+            left:768px;
             width:31px;
             height:31px;
         "
@@ -405,8 +391,8 @@ function bukaHalaman(){
         value="6"
         style="
             position:absolute;
-            top:388px;
-            left:741px;
+            top:399px;
+            left:858px;
             width:31px;
             height:31px;
         "
@@ -418,10 +404,10 @@ function bukaHalaman(){
         onclick="masukKelas()"
         style="
             position:absolute;
-            top:598px;
-            left:550px;
-            width:167px;
-            height:40px;
+            top:600px;
+            left:515px;
+            width:250px;
+            height:60px;
             background:transparent;
             border:none;
             cursor:pointer;
@@ -434,10 +420,10 @@ function bukaHalaman(){
         onclick="buka('coverrr')"
         style="
             position:absolute;
-            top:665px;
-            left:461px;
-            width:50px;
-            height:40px;
+            top:606px;
+            left:55px;
+            width:60px;
+            height:55px;
             background:transparent;
             border:none;
             cursor:pointer;
@@ -525,13 +511,11 @@ function masukKelas(){
     refreshDashboard();
 
     // LANGSUNG MASUK KE PAPAN PERMAINAN
-    buka("papanpermainann");
+    buka("papanpermainann6");
 
 }
 
     function buka(id){
-
-        document.body.classList.toggle("papan-aktif", id === "papanpermainann");
 
         document
             .querySelectorAll(".halaman")
@@ -555,7 +539,7 @@ function masukKelas(){
 
         }
 
-        if(id=="papanpermainann"){
+        if(id=="papanpermainann6"){
 
             jumlahKelompok =
             parseInt(localStorage.getItem("jumlahKelompok")) || 6;
@@ -574,7 +558,7 @@ function masukKelas(){
 
         let jumlah = localStorage.getItem("jumlahKelompok") || "6";
 
-        let bg = document.getElementById("bgMasukKelas");
+        let bg = document.getElementById("bgMasukKelas6_Landscape");
 
         const btnKembali = document.getElementById("btnKembali");
 
@@ -688,7 +672,7 @@ function masukKelas(){
 </script>
 
 <!-- PAPAN -->
-<div id="papanpermainann" class="halaman">
+<div id="papanpermainann6" class="halaman">
 
     <div id="wadahPion"
     style="
@@ -4891,373 +4875,6 @@ window.URL_REFLEKSI_APPS_SCRIPT = "https://script.google.com/d/1bBjgn_-F80bFJqCd
     };
 
     if (!URL_PENGIRIMAN ||
-        URL_PENGIRIMAN.startsWith("https://") ||
-        URL_PENGIRIMAN.includes("TEM!PEL_URL")) {
-      status.textContent = "URL pengiriman belum dipasang.";
-      return;
-    }
-
-    tombol.disabled = true;
-    tombol.textContent = "MENGIRIM...";
-    status.textContent = "";
-
-    try {
-      await fetch(URL_PENGIRIMAN, {
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "text/plain;charset=utf-8"
-        },
-        body: JSON.stringify(data)
-      });
-
-      status.textContent =
-        "Permintaan terkirim. Periksa ke Google Sheets untuk memastikan jawaban tersimpan.";
-      form.reset();
-
-    } catch (error) {
-      status.textContent =
-        "Gagal mengirim. Periksa koneksi dan URL Web App.";
-    } finally {
-      tombol.disabled = false;
-      tombol.textContent = "KIRIM REFLEKSI 💌";
-    }
-  });
-})();
-</script>
-
-<!-- HALAMAN REFLEKSI NGOBROL YUK -->
-<div id="halamanRefleksi" class="halaman">
-  <div id="refleksi-wrapper">
-
-    <div class="refleksi-header">
-      <div class="refleksi-judul">💬 Ngobrol Yuk!</div>
-      <p>Ceritakan pengalamanmu setelah bermain Seren Taun, ya! 🌾</p>
-    </div>
-
-    <form id="formRefleksi">
-
-      <div class="refleksi-identitas">
-        <label for="namaRefleksi">Nama siswa</label>
-        <input
-          type="text"
-          id="namaRefleksi"
-          placeholder="Masukkan nama lengkapmu"
-          required
-        >
-
-        <label for="kelasRefleksi">Kelas</label>
-        <input
-          type="text"
-          id="kelasRefleksi"
-          placeholder="Contoh: VII A"
-          required
-        >
-      </div>
-
-      <div class="refleksi-pertanyaan">
-        <label for="jawaban1">
-          🌷 1. Bagaimana perasaanmu setelah bermain game Seren Taun?
-        </label>
-        <textarea
-          id="jawaban1"
-          placeholder="Ceritakan perasaanmu di sini..."
-          required
-        ></textarea>
-      </div>
-
-      <div class="refleksi-pertanyaan">
-        <label for="jawaban2">
-          🎮 2. Bagian permainan apa yang paling kamu sukai?
-        </label>
-        <textarea
-          id="jawaban2"
-          placeholder="Bagian yang paling aku sukai adalah..."
-          required
-        ></textarea>
-      </div>
-
-      <div class="refleksi-pertanyaan">
-        <label for="jawaban3">
-          🌾 3. Apa pengetahuan baru yang kamu dapatkan?
-        </label>
-        <textarea
-          id="jawaban3"
-          placeholder="Hari ini aku belajar tentang..."
-          required
-        ></textarea>
-      </div>
-
-      <div class="refleksi-pertanyaan">
-        <label for="jawaban4">
-          ✨ 4. Apa harapanmu jika bermain lagi?
-        </label>
-        <textarea
-          id="jawaban4"
-          placeholder="Harapanku adalah..."
-          required
-        ></textarea>
-      </div>
-
-      <button type="submit" id="tombolKirimRefleksi">
-        KIRIM REFLEKSI 💌
-      </button>
-
-      <p id="statusRefleksi" role="status"></p>
-
-    </form>
-
-    <button
-      type="button"
-      id="tombolKembaliRefleksi"
-      onclick="buka('masukkelas')"
-    >
-      ← Kembali ke MasukKelas
-    </button>
-
-  </div>
-</div>
-
-<style>
-/* KHUSUS HALAMAN REFLEKSI */
-#halamanRefleksi {
-  position: relative !important;
-  width: 100% !important;
-  height: 100% !important;
-  min-height: 100vh;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  box-sizing: border-box !important;
-  background: #f2f7e9 !important;
-  padding: 24px 16px !important;
-  font-family: Arial, sans-serif;
-}
-
-#halamanRefleksi *,
-#halamanRefleksi *::before,
-#halamanRefleksi *::after {
-  box-sizing: border-box !important;
-}
-
-#refleksi-wrapper {
-  position: relative !important;
-  width: 100% !important;
-  max-width: 760px !important;
-  height: auto !important;
-  min-height: 0 !important;
-  margin: 0 auto !important;
-  padding: 28px !important;
-  background: #ffffff !important;
-  border: 5px solid #7ca65b !important;
-  border-radius: 26px !important;
-  box-shadow: 0 8px 20px rgba(57, 88, 39, 0.12);
-}
-
-/* JUDUL */
-#halamanRefleksi .refleksi-header {
-  position: relative !important;
-  width: 100% !important;
-  margin: 0 0 26px !important;
-  text-align: center !important;
-}
-
-#halamanRefleksi .refleksi-judul {
-  position: relative !important;
-  font-size: clamp(27px, 4vw, 40px) !important;
-  font-weight: 800 !important;
-  color: #477c38 !important;
-  line-height: 1.3 !important;
-}
-
-#halamanRefleksi .refleksi-header p {
-  position: relative !important;
-  margin: 8px 0 0 !important;
-  color: #40513a !important;
-  font-size: 16px !important;
-  line-height: 1.6 !important;
-}
-
-/* FORM */
-#halamanRefleksi #formRefleksi {
-  position: relative !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 20px !important;
-  width: 100% !important;
-  height: auto !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-/* NAMA DAN KELAS */
-#halamanRefleksi .refleksi-identitas {
-  position: relative !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 9px !important;
-  width: 100% !important;
-  margin: 0 !important;
-}
-
-#halamanRefleksi label {
-  position: relative !important;
-  display: block !important;
-  width: 100% !important;
-  height: auto !important;
-  margin: 0 !important;
-  color: #385d2f !important;
-  font-size: 16px !important;
-  font-weight: 700 !important;
-  line-height: 1.5 !important;
-  text-align: left !important;
-}
-
-#halamanRefleksi input,
-#halamanRefleksi textarea {
-  position: relative !important;
-  display: block !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  min-width: 0 !important;
-  height: auto !important;
-  margin: 0 !important;
-  padding: 13px 15px !important;
-  border: 2px solid #bfd3ad !important;
-  border-radius: 12px !important;
-  background: #ffffff !important;
-  color: #30452b !important;
-  font-family: Arial, sans-serif !important;
-  font-size: 15px !important;
-  line-height: 1.5 !important;
-  box-shadow: none !important;
-}
-
-#halamanRefleksi input {
-  min-height: 48px !important;
-}
-
-#halamanRefleksi textarea {
-  min-height: 105px !important;
-  resize: vertical !important;
-}
-
-/* SETIAP PERTANYAAN */
-#halamanRefleksi .refleksi-pertanyaan {
-  position: relative !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: stretch !important;
-  gap: 10px !important;
-  width: 100% !important;
-  height: auto !important;
-  margin: 0 !important;
-  padding: 17px !important;
-  background: #f8fbf4 !important;
-  border: 1px solid #dce8d2 !important;
-  border-radius: 15px !important;
-}
-
-/* TOMBOL KIRIM */
-#halamanRefleksi #tombolKirimRefleksi {
-  position: relative !important;
-  display: block !important;
-  width: 100% !important;
-  height: auto !important;
-  min-height: 54px !important;
-  margin: 0 !important;
-  padding: 15px 20px !important;
-  border: none !important;
-  border-radius: 13px !important;
-  background: #638f4b !important;
-  color: #ffffff !important;
-  font-size: 17px !important;
-  font-weight: 800 !important;
-  cursor: pointer !important;
-}
-
-#halamanRefleksi #tombolKirimRefleksi:hover {
-  background: #4d7638 !important;
-}
-
-/* STATUS */
-#halamanRefleksi #statusRefleksi {
-  position: relative !important;
-  margin: 0 !important;
-  text-align: center !important;
-  color: #477c38 !important;
-  line-height: 1.5 !important;
-}
-
-/* TOMBOL KEMBALI */
-#halamanRefleksi #tombolKembaliRefleksi {
-  position: relative !important;
-  display: block !important;
-  width: auto !important;
-  max-width: 100% !important;
-  height: auto !important;
-  margin: 22px auto 0 !important;
-  padding: 12px 20px !important;
-  border: 2px solid #7ca65b !important;
-  border-radius: 12px !important;
-  background: #ffffff !important;
-  color: #477c38 !important;
-  font-size: 15px !important;
-  font-weight: 700 !important;
-  cursor: pointer !important;
-}
-
-/* TAMPILAN HP */
-@media (max-width: 600px) {
-  #halamanRefleksi {
-    padding: 12px 8px !important;
-  }
-
-  #refleksi-wrapper {
-    padding: 18px 13px !important;
-    border-width: 3px !important;
-    border-radius: 19px !important;
-  }
-
-  #halamanRefleksi .refleksi-pertanyaan {
-    padding: 13px !important;
-  }
-
-  #halamanRefleksi label {
-    font-size: 14px !important;
-  }
-}
-</style>
-
-
-<script>
-// GANTI URL INI DENGAN URL WEB APP GOOGLE APPS SCRIPT ASLI
-window.URL_REFLEKSI_APPS_SCRIPT = "https://script.google.com/d/1bBjgn_-F80bFJqCdgZT7vaES3XISbVuXLBI2qrjkiBlpmHLTAK1cEK_J/edit?usp=sharing";
-
-(function () {
-  const URL_PENGIRIMAN = window.URL_REFLEKSI_APPS_SCRIPT;
-  const form = document.getElementById("formRefleksi");
-
-  if (!form || form.dataset.terpasang === "ya") return;
-  form.dataset.terpasang = "ya";
-
-  form.addEventListener("submit", async function (event) {
-    event.preventDefault();
-
-    const tombol = document.getElementById("tombolKirimRefleksi");
-    const status = document.getElementById("statusRefleksi");
-
-    const data = {
-      nama: document.getElementById("namaRefleksi").value.trim(),
-      kelas: document.getElementById("kelasRefleksi").value.trim(),
-      jawaban: [
-        document.getElementById("jawaban1").value.trim(),
-        document.getElementById("jawaban2").value.trim(),
-        document.getElementById("jawaban3").value.trim(),
-        document.getElementById("jawaban4").value.trim()
-      ]
-    };
-
-    if (!URL_PENGIRIMAN ||
         !URL_PENGIRIMAN.startsWith("https://") ||
         URL_PENGIRIMAN.includes("TEMPEL_URL")) {
       status.textContent = "URL pengiriman belum dipasang.";
@@ -5305,7 +4922,7 @@ window.URL_REFLEKSI_APPS_SCRIPT = "https://script.google.com/d/1bBjgn_-F80bFJqCd
         ">
 
         <img
-                    src="QR EVALUASI.png"
+                    src="qreval.png"
                     alt="QR Code Evaluasi"
                     style="
                         position:absolute;
@@ -5318,7 +4935,7 @@ window.URL_REFLEKSI_APPS_SCRIPT = "https://script.google.com/d/1bBjgn_-F80bFJqCd
 
                 <!-- Link -->
                 <a
-                    href="https://forms.gle/KiLeMrCnJgkxANJJA"
+                    href="https://forms.gle/MwUhHRoqPWU1YaRG7"
                     target="_blank"
                     style="
                         position:absolute;
@@ -5333,7 +4950,7 @@ window.URL_REFLEKSI_APPS_SCRIPT = "https://script.google.com/d/1bBjgn_-F80bFJqCd
                         text-decoration:underline;
                         word-break:break-all;
                     ">
-                    https://forms.gle/KiLeMrCnJgkxANJJA
+                    https://forms.gle/MwUhHRoqPWU1YaRG7
                 </a>    
 
     <!-- TOMBOL KEMBALI -->
@@ -5496,7 +5113,7 @@ function kembaliMenu(){
 <!-- PANEL GURU -->
 <div id="panel_guruu" class="halaman">
 
-    <img src="Panel_guruu.png" style="width:100%;height:100%;object-fit:contain;">
+    <img src="panel_guruuu_Landscape.png" style="width:100%;height:100%;object-fit:contain;">
 
     <!-- 1-6 KELOMPOK -->
     <input
@@ -5505,10 +5122,10 @@ function kembaliMenu(){
         value="6"
         style="
             position:absolute;
-            top:365px;
-            left:455px;
-            width:40px;
-            height:40px;
+            top:400px;
+            left:360px;
+            width:60px;
+            height:60px;
             z-index:999999;
         "
     >
@@ -5517,10 +5134,10 @@ function kembaliMenu(){
         onclick="buatKelas()"
         style="
             position:absolute;
-            top:550px;
-            left:543px;
-            width:186px;
-            height:45px;
+            top:570px;
+            left:485px;
+            width:315px;
+            height:82px;
             background:transparent;
             border:none;
             cursor:pointer;
@@ -5528,20 +5145,21 @@ function kembaliMenu(){
         ">
     </button>
 
+    <!-- TOMBOL KEMBALI -->
     <button
         onclick="buka('coverGuru')"
         style="
             position:absolute;
-            top:662px;
-            left:451px;
-            width:40px;
-            height:40px;
+            top:605px;
+            left:30px;
+            width:80px;
+            height:60px;
             background:transparent;
             border:none;
             cursor:pointer;
-            z-index:999999;
-        ">
-    </button>
+            z-index:9999;
+        "
+    ></button>
 
 </div>
 
@@ -5604,17 +5222,17 @@ function buatKelas(){
 <!-- KODE KELAS -->
 <div id="kode_Kelass" class="halaman">
 
-    <img src="kode_kelass.png">
+    <img src="kode_kelas_Landscape.png">
 
     <div
         id="tampilKode"
         style="
             position:absolute;
-            top:240px;
-            left:415px;
-            width:350px;
+            top:313px;
+            left:455px;
+            width:370px;
             text-align:center;
-            font-size:28px;
+            font-size:40px;
             font-weight:bold;
         ">
     </div>
@@ -5624,10 +5242,10 @@ function buatKelas(){
     onclick="salinKode()"
     style="
     position:absolute;
-    top:372px;
-    left:545px;
-    width:193px;
-    height:50px;
+    top:410px;
+    left:475px;
+    width:315px;
+    height:88px;
     background:transparent;
     z-index:999999;
     ">
@@ -5638,10 +5256,10 @@ function buatKelas(){
         onclick="buka('DashboardGuruu')"
         style="
             position:absolute;
-            top:482px;
-            left:545px;
-            width:193px;
-            height:50px;
+            top:530px;
+            left:475px;
+            width:315px;
+            height:88px;
             background:transparent;
             z-index:999999;
         ">
@@ -5652,10 +5270,10 @@ function buatKelas(){
         onclick="buka('panel_guruu')"
         style="
             position:absolute;
-            top:669px;
-            left:450px;
-            width:44px;
-            height:40px;
+            top:600px;
+            left:30px;
+            width:76px;
+            height:76px;
             background:transparent;
             border:none;
             cursor:pointer;
@@ -5690,7 +5308,7 @@ function salinKode(){
 
     <img
         id="bgDashboard"
-        src="DashboardGuruu.png"
+        src="dashboardguruu_Landscape.png"
         style="
             width:100%;
             height:100%;
@@ -5704,14 +5322,14 @@ function salinKode(){
         id="kodeDashboard"
         style="
             position:absolute;
-            top:228px;
-            left:510px;
+            top:244px;
+            left:497px;
             width:80px;
             text-align:center;
             font-size:20px;
             font-weight:bold;
             color:black;
-            background:trasnaparent;
+            background:transparent;
             z-index:999999;
         ">
     </div>
@@ -5721,11 +5339,11 @@ function salinKode(){
         id="jumlahDashboard"
         style="
             position:absolute;
-            top:228px;
-            left:740px;
+            top:244px;
+            left:769px;
             width:50px;
             text-align:center;
-            font-size:20px;
+            font-size:25px;
             font-weight:bold;
             color:black;
             background:transparent;
@@ -5737,9 +5355,9 @@ function salinKode(){
         id="daftarSiswa"
         style="
             position:absolute;
-            top:373px;
-            left:469px;
-            width:340px;
+            top:390px;
+            left:437px;
+            width:540px;
             height:130px;
             overflow-y:auto;
             overflow-x:hidden;
@@ -5752,14 +5370,14 @@ function salinKode(){
         id="jumlahSiswaDashboard"
         style="
             position:absolute;
-            top:288px;
-            left:555px;
+            top:305px;
+            left:515px;
             width:255px;
             height:130px;
             overflow-y:auto;
             color:black;
             background:transparent;
-            font-size:15px;
+            font-size:25px;
             font-weight:bold;
             line-height:30px;
             z-index:999999;
@@ -5771,14 +5389,14 @@ function salinKode(){
         id="statusDashboard"
         style="
             position:absolute;
-            top:288px;
-            left:667px;
+            top:305px;
+            left:685px;
             width:255px;
             height:130px;
             overflow-y:auto;
             color:black;
             background:transparent;
-            font-size:15px;
+            font-size:20px;
             font-weight:bold;
             line-height:30px;
             z-index:999999;
@@ -5789,8 +5407,8 @@ function salinKode(){
         id="skorDashboard"
         style="
             position:absolute;
-            top:583px;
-            left:415px;
+            top:573px;
+            left:400px;
             width:500px;
             height:45px;
             background:transparent;
@@ -5803,10 +5421,10 @@ function salinKode(){
         onclick="mulaiPermainan()"
         style="
             position:absolute;
-            top:627px;
-            left:468px;
-            width:190px;
-            height:50px;
+            top:617px;
+            left:412px;
+            width:200px;
+            height:45px;
             background:transparent;
             border:none;
             z-index:999999;
@@ -5818,9 +5436,9 @@ function salinKode(){
         onclick="spinGiliran()"
         style="
             position:absolute;
-            top:678px;
-            left:623px;
-            width:120px;
+            top:669px;
+            left:613px;
+            width:155px;
             height:30px;
             background:transparent;
             border:none;
@@ -5834,8 +5452,8 @@ function salinKode(){
         onclick="akhiriPermainan()"
         style="
             position:absolute;
-            top:685px;
-            left:468px;
+            top:666px;
+            left:412px;
             width:190px;
             height:30px;
             background:transparent;
@@ -5849,10 +5467,10 @@ function salinKode(){
         onclick="resetRoom()"
         style="
             position:absolute;
-            top:640px;
-            left:668px;
+            top:621px;
+            left:628px;
             width:140px;
-            height:50px;
+            height:40px;
             background:transparent;
             border:none;
             z-index:999999;
@@ -5864,11 +5482,11 @@ function salinKode(){
         onclick="bukaHasilRefleksi()"
         style="
             position: absolute;
-            top:660px;
-            left:760px;
-            width:120px;
+            top:650px;
+            left:790px;
+            width:160px;
             height:50px;
-            background:red;
+            background:transparent;
             border:none;
             cursor:pointer;
             z-index:999999;
@@ -5880,8 +5498,8 @@ function salinKode(){
         onclick="buka('kode_Kelass')"
         style="
             position:absolute;
-            top:652px;
-            left:394px;
+            top:640px;
+            left:335px;
             width:48px;
             height:43px;
             background:transparent;
@@ -6133,13 +5751,13 @@ function refreshDashboard(){
 
     // Ganti background sesuai jumlah kelompok
     if (jumlahKelompok == "4") {
-        document.getElementById("bgDashboard").src = "dashboardguruu.png";
+        document.getElementById("bgDashboard").src = "dashboardguruu_Landscape.png";
     }
     else if (jumlahKelompok == "5") {
         document.getElementById("bgDashboard").src = "dashboardguruu5.png";
     }
     else if (jumlahKelompok == "6") {
-        document.getElementById("bgDashboard").src = "DashboardGuruu.png";
+        document.getElementById("bgDashboard").src = "dashboardguruu_Landscape.png";
     }
 
     // Hitung jumlah siswa
@@ -6205,12 +5823,12 @@ function refreshDashboard(){
     }
     else if (jumlah == 6) {
         posisi = [
-            {left:5},
-            {left:85},
+            {left:-30},
+            {left:68},
             {left:165},
-            {left:240},
-            {left:309},
-            {left:378}
+            {left:259},
+            {left:359},
+            {left:440}
         ];
     }
 
@@ -6267,7 +5885,7 @@ function refreshDashboard(){
                 <div style="
                     position:absolute;
                     top:${top}px;
-                    left:0;
+                    left:0px;
                     width:100%;
                     height:30px;
                 ">
@@ -6276,11 +5894,11 @@ function refreshDashboard(){
                         ${no}
                     </span>
 
-                    <span style="position:absolute; left:87px;">
+                    <span style="position:absolute; left:95px;">
                         ${nama}
                     </span>
 
-                    <span style="position:absolute; left:285px;">
+                    <span style="position:absolute; left:340px;">
                         ${kelompok.kelompok}
                     </span>
 
@@ -6499,8 +6117,8 @@ function buatTampilanRoda() {
             box-sizing:border-box;
             box-shadow:0 10px 40px #0005;
         ">
-            <h2 style="margin:0 0 8px;color:#285b36">
-                🎡 SPIN GILIRAN
+           <h2 style="margin:0 0 8px;color:#285b36">
+                🎡 <i>SPIN</i> GILIRAN
             </h2>
 
             <p id="statusSpin" style="margin:0 0 14px">
@@ -6525,8 +6143,8 @@ function buatTampilanRoda() {
                 </canvas>
             </div>
 
-            <h3 id="hasilSpin" style="color:#285b36">
-                Siap untuk spin!
+           <h3 id="hasilSpin" style="color:#285b36">
+                Siap untuk <i>spin</i>!
             </h3>
 
             <p id="urutanSpin"
@@ -6840,7 +6458,7 @@ function akhiriPermainan(){
 <div id="CapaianPembelajaran" class="halaman">
 
     <img
-        src="CapaianPembelajaran.png"
+        src="CapaianPembelajaran_Landscape.png"
         id="gambarCapaianPembelajaran"
         class="bg">
 
@@ -6849,10 +6467,10 @@ function akhiriPermainan(){
         onclick="buka('coverrr')"
         style="
             position:absolute;
-            top:653px;
-            left:462px;
-            width:40px;
-            height:40px;
+            top:585px;
+            left:45px;
+            width:70px;
+            height:70px;
             background:transparent;
             border:none;
             cursor:pointer;
@@ -6865,10 +6483,10 @@ function akhiriPermainan(){
         onclick="buka('TujuanPembelajaran2')"
         style="
             position:absolute;
-            top:653px;
-            left:779px;
-            width:40px;
-            height:40px;
+            top:585px;
+            left:1164px;
+            width:70px;
+            height:70px;
             background:transparent;
             border:none;
             cursor:pointer;
@@ -6882,7 +6500,7 @@ function akhiriPermainan(){
 <div id="TujuanPembelajaran2" class="halaman">
 
     <img
-        src="TujuanPembelajaran2.png"
+        src="TujuanPembelajaran_Landscape.png"
         id="gambarTujuanPembelajaran"
         class="bg">
 
@@ -6891,10 +6509,10 @@ function akhiriPermainan(){
         onclick="buka('CapaianPembelajaran')"
         style="
             position:absolute;
-            top:653px;
-            left:462px;
-            width:40px;
-            height:40px;
+            top:585px;
+            left:45px;
+            width:70px;
+            height:70px;
             background:transparent;
             border:none;
             cursor:pointer;
@@ -6907,10 +6525,10 @@ function akhiriPermainan(){
         onclick="buka('TujuanPembelajaran')"
         style="
             position:absolute;
-            top:653px;
-            left:779px;
-            width:40px;
-            height:40px;
+            top:585px;
+            left:1164px;
+            width:70px;
+            height:70px;
             background:transparent;
             border:none;
             cursor:pointer;
@@ -6924,7 +6542,7 @@ function akhiriPermainan(){
 <div id="TujuanPembelajaran" class="halaman">
 
     <img
-        src="TujuanPembelajaran.png"
+        src="TujuanPembelajaran2_Landscape.png"
         id="gambarTujuanPembelajaran"
         class="bg">
 
@@ -6933,10 +6551,10 @@ function akhiriPermainan(){
         onclick="buka('TujuanPembelajaran2')"
         style="
             position:absolute;
-            top:653px;
-            left:458px;
-            width:40px;
-            height:40px;
+            top:585px;
+            left:45px;
+            width:70px;
+            height:70px;
             background:transparent;
             border:none;
             cursor:pointer;
@@ -6949,10 +6567,10 @@ function akhiriPermainan(){
         onclick="buka('coverrr')"
         style="
             position:absolute;
-            top:653px;
-            left:775px;
-            width:40px;
-            height:40px;
+            top:585px;
+            left:1164px;
+            width:70px;
+            height:70px;
             background:transparent;
             border:none;
             cursor:pointer;
@@ -6967,7 +6585,7 @@ function akhiriPermainan(){
 <div id="MateriPd" class="halaman" style="display:none;">
 
     <img
-        src="MateriPd-.png"
+        src="MateriPd.png"
         class="bg">
 
     <!-- ROOM 1 -->
@@ -7050,8 +6668,8 @@ function akhiriPermainan(){
         onclick="buka('coverrr')"
         style="
             position:absolute;
-            top:643px;
-            left:430px;
+            top:623px;
+            left:60px;
             width:45px;
             height:45px;
             background:transparent;
@@ -7098,7 +6716,7 @@ function tombolKembaliMateri(){
 <!-- HALAMAN ROOM 1 -->
 <div id="RoomMateri1" class="halaman" style="display:none;">
 
-    <img src="RoomMateri1-.png" class="bg">
+    <img src="RoomMateri1_Land.png" class="bg">
 
     <!-- Isi Materi -->
     <div class="isiMateri">
@@ -7267,10 +6885,10 @@ function tombolKembaliMateri(){
         onclick="buka('MateriPd')"
         style="
             position:absolute;
-            top:616px;
-            left:480px;
-            width:45px;
-            height:40px;
+            top:610px;
+            left:45px;
+            width:55px;
+            height:50px;
             background:transparent;
             border:none;
             cursor:pointer;
@@ -7284,9 +6902,9 @@ function tombolKembaliMateri(){
     #RoomMateri1 .isiMateri{
         position:absolute;
         top:240px;   
-        left:500px;
+        left:315px;
 
-        width:270px;
+        width:670px;
         height:348px;
 
         padding:15px;
@@ -7419,7 +7037,7 @@ function tombolKembaliMateri(){
 <div id="RoomMateri2" class="halaman" style="display:none;">
 
     <img
-        src="RoomMateri2-.png"
+        src="RoomMateri2.png"
         class="bg">
 
     <!-- Isi Materi -->
@@ -7515,10 +7133,10 @@ function tombolKembaliMateri(){
         onclick="buka('MateriPd')"
         style="
             position:absolute;
-            top:616px;
-            left:480px;
-            width:45px;
-            height:40px;
+            top:610px;
+            left:45px;
+            width:55px;
+            height:50px;
             background:transparent;
             border:none;
             cursor:pointer;
@@ -7532,9 +7150,9 @@ function tombolKembaliMateri(){
     #RoomMateri2 .isiMateri{
         position:absolute;
         top:240px;   
-        left:500px;
+        left:315px;
 
-        width:270px;
+        width:670px;
         height:348px;
 
         padding:15px;
@@ -7661,7 +7279,7 @@ function tombolKembaliMateri(){
 <div id="RoomMateri3" class="halaman" style="display:none;">
 
     <img
-        src="RoomMateri3-.png"
+        src="RoomMateri3.png"
         class="bg">
 
     <!-- Isi Materi -->
@@ -7916,10 +7534,10 @@ function tombolKembaliMateri(){
         onclick="buka('MateriPd')"
         style="
             position:absolute;
-            top:616px;
-            left:480px;
-            width:45px;
-            height:40px;
+            top:610px;
+            left:45px;
+            width:55px;
+            height:50px;
             background:transparent;
             border:none;
             cursor:pointer;
@@ -7933,9 +7551,9 @@ function tombolKembaliMateri(){
     #RoomMateri3 .isiMateri{
         position:absolute;
         top:240px;   
-        left:500px;
+        left:315px;
 
-        width:270px;
+        width:670px;
         height:348px;
 
         padding:15px;
@@ -8601,7 +8219,7 @@ function tombolKembaliMateri(){
 <div id="RoomMateri4" class="halaman" style="display:none;">
 
     <img
-        src="RoomMateri4-.png"
+        src="RoomMateri4.png"
         class="bg">
 
     <!-- Isi Materi -->
@@ -8685,10 +8303,10 @@ function tombolKembaliMateri(){
         onclick="buka('MateriPd')"
         style="
             position:absolute;
-            top:616px;
-            left:480px;
-            width:45px;
-            height:40px;
+            top:610px;
+            left:45px;
+            width:55px;
+            height:50px;
             background:transparent;
             border:none;
             cursor:pointer;
@@ -8703,9 +8321,9 @@ function tombolKembaliMateri(){
     #RoomMateri4 .isiMateri{
         position:absolute;
         top:240px;   
-        left:500px;
+        left:315px;
 
-        width:270px;
+        width:670px;
         height:348px;
 
         padding:15px;
@@ -8872,12 +8490,12 @@ function tombolKembaliMateri(){
         ">
 
         <img
-                    src="QR EVALUASI.png"
+                    src="qreval.png"
                     alt="QR Code Evaluasi"
                     style="
                         position:absolute;
-                        top:500px;
-                        left:511px;
+                        top:520px;
+                        left:480px;
                         width:95px;
                         height:95px;
                         z-index:10;
@@ -8885,14 +8503,14 @@ function tombolKembaliMateri(){
 
                 <!-- Link -->
                 <a
-                    href="https://forms.gle/KiLeMrCnJgkxANJJA"
+                    href="https://forms.gle/MwUhHRoqPWU1YaRG7"
                     target="_blank"
                     style="
                         position:absolute;
-                        top:564px;
-                        left:657px;
-                        width:132px;
-                        height:27px;
+                        top:590px;
+                        left:683px;
+                        width:140px;
+                        height:20px;
                         text-align:center;
                         font-size:10px;
                         color:#0b63ce;
@@ -8900,7 +8518,7 @@ function tombolKembaliMateri(){
                         text-decoration:underline;
                         word-break:break-all;
                     ">
-                    https://forms.gle/KiLeMrCnJgkxANJJA
+                    https://forms.gle/MwUhHRoqPWU1YaRG7
                 </a>    
 
     <!-- TOMBOL KEMBALI -->
@@ -8909,7 +8527,7 @@ function tombolKembaliMateri(){
         style="
             position:absolute;
             top:658px;
-            left:436px;
+            left:380px;
             width:40px;
             height:40px;
             background:transparent;
@@ -8925,7 +8543,7 @@ function tombolKembaliMateri(){
         style="
             position:absolute;
             top:658px;
-            left:803px;
+            left:873px;
             width:40px;
             height:40px;
             background:transparent;
@@ -8939,17 +8557,17 @@ function tombolKembaliMateri(){
 
 <!-- COVER -->
 <div id="coverGuru" class="halaman">
-    <img src="coverGuru.png">
+    <img src="coverGuru_Landscape.png">
 
     <!-- TUJUAN PEMBELAJARAN-->
     <button
         onclick="buka('panel_guruu')"
         style="
             position:absolute;
-            top:458px;
-            left:554px;
-            width:171px;
-            height:66px;
+            top:435px;
+            left:472px;
+            width:330px;
+            height:100px;
             background:transparent;
             border:none;
             cursor:pointer;">
@@ -8960,10 +8578,10 @@ function tombolKembaliMateri(){
         onclick="buka('MateriGuru')"
         style="
             position:absolute;
-            top:549px;
-            left:554px;
-            width:171px;
-            height:66px;
+            top:552px;
+            left:472px;
+            width:330px;
+            height:105px;
             background:transparent;
             border:none;
             cursor:pointer;">
@@ -8974,9 +8592,9 @@ function tombolKembaliMateri(){
         onclick="buka('coverAwal')"
         style="
             position:absolute;
-            top:637px;
-            left:455px;
-            width:35px;
+            top:600px;
+            left:30px;
+            width:76px;
             height:35px;
             background:transparent;
             border:none;
@@ -9056,10 +8674,10 @@ function tombolKembaliMateri(){
         onclick="buka('coverGuru')"
         style="
             position:absolute;
-            top:643px;
-            left:430px;
-            width:45px;
-            height:45px;
+            top:603px;
+            left:50px;
+            width:55px;
+            height:55px;
             background:transparent;
             border:none;
             cursor:pointer;
@@ -9094,7 +8712,7 @@ function tombolKembaliMateri(){
     }
     else{
         gambar.src =
-            "coverGuru.png";
+            "coverGuru_Landscape.png";
     }
 
 }
@@ -9109,7 +8727,7 @@ function tombolKembaliMateri(){
 
     <!-- BACKGROUND -->
     <img
-        src="RoomMateri1Guru.png"
+        src="RoomMateri1_Land.png"
         class="bg">
 
 
@@ -9374,10 +8992,10 @@ function tombolKembaliMateri(){
         onclick="buka('MateriGuru')"
         style="
             position:absolute;
-            top:616px;
-            left:480px;
-            width:45px;
-            height:40px;
+            top:610px;
+            left:45px;
+            width:55px;
+            height:50px;
             background:transparent;
             border:none;
             cursor:pointer;
@@ -9397,10 +9015,10 @@ function tombolKembaliMateri(){
 
     position:absolute;
 
-    top:240px;
-    left:500px;
+    top:240px;   
+    left:315px;
 
-    width:270px;
+    width:670px;
     height:348px;
 
     padding:15px;
@@ -9569,7 +9187,7 @@ function tombolKembaliMateri(){
 
     <!-- Background -->
     <img
-        src="RoomMateri4Guru.png"
+        src="RoomMateri4.png"
         class="bg">
 
     <!-- Isi Materi -->
@@ -9659,8 +9277,8 @@ function tombolKembaliMateri(){
         onclick="buka('MateriGuru')"
         style="
             position:absolute;
-            top:616px;
-            left:480px;
+            top:610px;
+            left:45px;
             width:45px;
             height:40px;
             background:transparent;
@@ -9677,10 +9295,10 @@ function tombolKembaliMateri(){
 
     #RoomMateri4Guru .isiMateri{
         position:absolute;
-        top:240px;
-        left:500px;
+        top:240px;   
+        left:315px;
 
-        width:270px;
+        width:670px;
         height:348px;
 
         padding:15px;
@@ -9820,7 +9438,7 @@ function tombolKembaliMateri(){
 
     <!-- BACKGROUND ROOM 2 GURU -->
     <img
-        src="RoomMateri2Guruu.png"
+        src="RoomMateri2.png"
         class="bg">
 
 
@@ -9966,10 +9584,10 @@ function tombolKembaliMateri(){
         onclick="buka('MateriGuru')"
         style="
             position:absolute;
-            top:616px;
-            left:480px;
-            width:45px;
-            height:40px;
+            top:610px;
+            left:45px;
+            width:55px;
+            height:50px;
             background:transparent;
             border:none;
             cursor:pointer;
@@ -9990,9 +9608,9 @@ function tombolKembaliMateri(){
     position:absolute;
 
     top:240px;
-    left:500px;
+    left:335px;
 
-    width:270px;
+    width:580px;
     height:348px;
 
     padding:15px;
@@ -10191,7 +9809,7 @@ function tombolKembaliMateri(){
 <div id="RoomMateri3Guru" class="halaman" style="display:none;">
 
     <img
-        src="RoomMateri3Guru.png"
+        src="RoomMateri3.png"
         class="bg">
 
     <!-- Isi Materi -->
@@ -10445,10 +10063,10 @@ function tombolKembaliMateri(){
         onclick="buka('MateriGuru')"
         style="
             position:absolute;
-            top:616px;
-            left:480px;
-            width:45px;
-            height:40px;
+            top:610px;
+            left:45px;
+            width:55px;
+            height:50px;
             background:transparent;
             border:none;
             cursor:pointer;
@@ -10465,9 +10083,9 @@ function tombolKembaliMateri(){
 
     top: 240px;
 
-    left: 500px;
+    left: 315px;
 
-    width: 270px;
+    width: 670px;
 
     height: 348px;
 
@@ -11294,7 +10912,7 @@ function tombolKembaliMateri(){
 <div id="ManualBook" class="halaman" style="display:none;">
 
     <img
-        src="ManualBook.png"
+        src="ManualBook_Landscape.png"
         style="
             width:100%;
             height:100%;
@@ -11306,10 +10924,10 @@ function tombolKembaliMateri(){
         onclick="buka('PetunjukPenggunaanPd')"
         style="
             position:absolute;
-            top:567px;
-            left:506px;
-            width:110px;
-            height:35px;
+            top:522px;
+            left:431px;
+            width:182px;
+            height:55px;
             background:transparent;
             border:none;
             cursor:pointer;">
@@ -11320,10 +10938,10 @@ function tombolKembaliMateri(){
         onclick="buka('PetunjukPenggunaanGuru')"
         style="
             position:absolute;
-            top:567px;
-            left:653px;
-            width:110px;
-            height:35px;
+            top:522px;
+            left:853px;
+            width:160px;
+            height:55px;
             background:transparent;
             border:none;
             cursor:pointer;">
@@ -11334,10 +10952,10 @@ function tombolKembaliMateri(){
         onclick="buka('coverAwal')"
         style="
             position:absolute;
-            top:20px;
-            left:456px;
-            width:40px;
-            height:35px;
+            top:30px;
+            left:35px;
+            width:60px;
+            height:60px;
             background:transparent;
             border:none;
             cursor:pointer;
@@ -11488,7 +11106,7 @@ function tombolKembaliMateri(){
                 break;
 
             case "masukkelas":
-            case "papanpermainann":
+            case "papanpermainann6":
                 gantiMusik("musik-game.mp3");
                 break;
 
@@ -11546,6 +11164,30 @@ window.remove = remove;
 
 console.log("✅ Firebase berhasil terhubung!");
 
+</script>
+
+
+<script>
+(function(){
+  const ids = ['coverAwal', 'coverrr', 'coverGuru', 'panel_guruu', 'kode_Kelass'];
+  function fitLandscapeCovers(){
+    const w = document.documentElement.clientWidth || window.innerWidth;
+    const h = document.documentElement.clientHeight || window.innerHeight;
+    const scale = Math.min(w / 1280, h / 720);
+    ids.forEach(function(id){
+      const page = document.getElementById(id);
+      if (!page) return;
+      page.style.width = '1280px';
+      page.style.height = '720px';
+      page.style.transformOrigin = 'top left';
+      page.style.transform = 'scale(' + scale + ')';
+      page.style.left = ((w - 1280 * scale) / 2) + 'px';
+      page.style.top = ((h - 720 * scale) / 2) + 'px';
+    });
+  }
+  window.addEventListener('resize', fitLandscapeCovers);
+  fitLandscapeCovers();
+})();
 </script>
 
 </body>
