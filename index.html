@@ -5969,11 +5969,10 @@ function refreshDashboard(){
 }
 
 
-async function mulaiPermainan(){
-
+function mulaiPermainan() {
     const kode = localStorage.getItem("kode_Kelass");
 
-    if(!kode){
+    if (!kode) {
         alert("Kode kelas tidak ditemukan!");
         return;
     }
@@ -5981,27 +5980,45 @@ async function mulaiPermainan(){
     const jumlah =
         parseInt(localStorage.getItem("jumlahKelompok")) || 0;
 
-    try {
-        for(let i = 1; i <= jumlah; i++){
-            localStorage.setItem("skorKelompok" + i, 0);
-        }
-
-        await window.update(
-            window.ref(window.database, "kelas/" + kode),
-            { status: "Sedang Berlangsung" }
-        );
-
-        localStorage.setItem("statusPermainan", "Sedang Berlangsung");
-
-        refreshDashboard();
-        alert("Permainan dimulai!");
-
-    } catch(error) {
-        console.error(error);
-        alert("Gagal memperbarui status permainan.");
+    // Reset skor setiap kelompok
+    for (let i = 1; i <= jumlah; i++) {
+        localStorage.setItem("skorKelompok" + i, "0");
     }
+
+    // Simpan status permainan
+    localStorage.setItem(
+        "statusPermainan",
+        "Sedang Berlangsung"
+    );
+
+    refreshDashboard();
+
+    alert("Permainan berhasil dimulai!");
 }
 
+
+function akhiriPermainan() {
+    if (!confirm("Apakah Anda yakin ingin mengakhiri permainan?")) {
+        return;
+    }
+
+    const kode = localStorage.getItem("kode_Kelass");
+
+    if (!kode) {
+        alert("Kode kelas tidak ditemukan!");
+        return;
+    }
+
+    // Simpan status permainan
+    localStorage.setItem(
+        "statusPermainan",
+        "Permainan Selesai"
+    );
+
+    refreshDashboard();
+
+    alert("Permainan telah berakhir.");
+}
 
 async function akhiriPermainan(){
 
@@ -6023,79 +6040,76 @@ async function akhiriPermainan(){
         alert("Permainan telah berakhir.");
 
     } catch(error) {
-        console.error(error);
-        alert("Gagal memperbarui status permainan.");
+        console.error("ERROR FIREBASE:", error);
+        alert(
+            "Gagal memperbarui status permainan!\n\n" +
+            "Kode: " + (error.code || "Tidak diketahui") +
+            "\nPesan: " + error.message
+        );
     }
 }
 
-
-    async function resetRoom() {
+    function resetRoom() {
         if (!confirm("Yakin ingin mereset room? Semua data permainan akan dihapus.")) {
             return;
         }
 
-        const kodeLama = localStorage.getItem("kode_Kelass");
-        const jumlah = parseInt(localStorage.getItem("jumlahKelompok")) || 6;
-        const kodeBaru = "ST" + Math.floor(1000 + Math.random() * 9000);
+        const jumlah =
+            parseInt(localStorage.getItem("jumlahKelompok")) || 6;
 
-        try {
-            // Buat room baru di Firebase
-            await window.set(
-                window.ref(window.database, "kelas/" + kodeBaru),
-                {
-                    kode: kodeBaru,
-                    jumlahKelompok: jumlah,
-                    status: "Belum Dimulai",
-                    dataPemain: {}
-                }
-            );
+        const kodeBaru =
+            "ST" + Math.floor(1000 + Math.random() * 9000);
 
-            // Hapus room lama dari Firebase
-            if (kodeLama) {
-                await window.remove(
-                    window.ref(window.database, "kelas/" + kodeLama)
-                );
-            }
+        // Simpan kode room baru
+        localStorage.setItem("kode_Kelass", kodeBaru);
 
-            localStorage.setItem("kode_Kelass", kodeBaru);
-            localStorage.setItem("dataPemain", JSON.stringify([]));
-            localStorage.setItem("statusPermainan", "Belum Dimulai");
+        // Reset data pemain dan status
+        localStorage.setItem("dataPemain", JSON.stringify([]));
+        localStorage.setItem("statusPermainan", "Belum Dimulai");
 
-            for (let i = 1; i <= jumlah; i++) {
-                localStorage.setItem("skorKelompok" + i, 0);
-            }
-
-            const dataReset = [
-                "urutanGiliran", "giliranSekarang", "indexGiliran",
-                "posisiPemain", "sedangJalan", "skipGiliran",
-                "sudahKeluarStart", "giliran", "spinJumlahKelompok",
-                "spinKelompokSisa"
-            ];
-
-            dataReset.forEach(item => localStorage.removeItem(item));
-
-            daftarSisa = [];
-            daftarUrutan = [];
-            sudutRoda = 0;
-            rodaSedangBerputar = false;
-
-            if (lapisanRoda) {
-                lapisanRoda.remove();
-                lapisanRoda = null;
-            }
-
-            canvasRoda = null;
-            ctxRoda = null;
-
-            window.dashboardListenerKode = null;
-            refreshDashboard();
-
-            alert("Room berhasil direset! Kode kelas baru: " + kodeBaru);
-
-        } catch (error) {
-            console.error(error);
-            alert("Gagal mereset room di Firebase. Periksa koneksi internet.");
+        // Reset skor kelompok
+        for (let i = 1; i <= jumlah; i++) {
+            localStorage.setItem("skorKelompok" + i, "0");
         }
+
+        // Hapus data giliran dan permainan
+        const dataReset = [
+            "urutanGiliran",
+            "giliranSekarang",
+            "indexGiliran",
+            "posisiPemain",
+            "sedangJalan",
+            "skipGiliran",
+            "sudahKeluarStart",
+            "giliran",
+            "spinJumlahKelompok",
+            "spinKelompokSisa"
+        ];
+
+        dataReset.forEach(item => {
+            localStorage.removeItem(item);
+        });
+
+        // Reset roda permainan
+        daftarSisa = [];
+        daftarUrutan = [];
+        sudutRoda = 0;
+        rodaSedangBerputar = false;
+
+        if (lapisanRoda) {
+            lapisanRoda.remove();
+            lapisanRoda = null;
+        }
+
+        canvasRoda = null;
+        ctxRoda = null;
+
+        window.dashboardListenerKode = null;
+
+        // Perbarui dashboard
+        refreshDashboard();
+
+        alert("Room berhasil direset! Kode kelas baru: " + kodeBaru);
     }
 
 // JANGAN langsung dipanggil di sini
@@ -11201,6 +11215,11 @@ function tombolKembaliMateri(){
 <!-- ================= FIREBASE ================= -->
 <script type="module">
 
+import {
+    getAuth,
+    signInAnonymously
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 
 import {
@@ -11226,6 +11245,10 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
+
+const auth = getAuth(app);
+
+window.firebaseReady = signInAnonymously(auth);
 
 // supaya bisa dipanggil dari script lain
 window.database = database;
