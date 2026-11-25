@@ -64,14 +64,25 @@ button{
     z-index:0;
 }
 
-@media (max-width:768px){
+/* PESAN PUTAR HP SAAT MEMBUKA PAPAN */
+#pesanPutarHp {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999999;
+    background: #000;
+    color: white;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 30px;
+    font-size: 24px;
+}
 
-    #bgPapan{
-        left:34% !important;   /* geser ke kiri */
-        height:100% !important;
-        width:auto !important;
+@media screen and (max-width: 768px) and (orientation: portrait) {
+    body.papan-aktif #pesanPutarHp {
+        display: flex;
     }
-
 }
 
 .halaman button,
@@ -142,6 +153,10 @@ button{
 </head>
 
 <body>
+
+<div id="pesanPutarHp">
+    Silakan putar HP ke posisi landscape untuk memainkan permainan.
+</div>
 
 <!-- ================= COVER AWAL ================= -->
 <div id="coverAwal" class="halaman">
@@ -516,6 +531,7 @@ function masukKelas(){
 }
 
     function buka(id){
+        document.body.classList.toggle("papan-aktif", id === "papanpermainann6");
 
         document
             .querySelectorAll(".halaman")
@@ -5165,9 +5181,10 @@ function kembaliMenu(){
 
 <script>
 
-function buatKelas(){
 
-    let kelompok = document.querySelector(
+async function buatKelas(){
+
+    const kelompok = document.querySelector(
         'input[name="jumlahKelompok"]:checked'
     );
 
@@ -5176,46 +5193,35 @@ function buatKelas(){
         return;
     }
 
-    // =========================
-    // BUAT KODE KELAS
-    // =========================
+    const kode =
+        "ST" + Math.floor(1000 + Math.random() * 9000);
 
-    let kode = localStorage.getItem("kode_Kelass");
-
-    if(!kode){
-
-        kode =
-            "ST" +
-            Math.floor(1000 + Math.random() * 9000);
-
-        localStorage.setItem(
-            "kode_Kelass",
-            kode
+    try {
+        await window.set(
+            window.ref(window.database, "kelas/" + kode),
+            {
+                kode: kode,
+                jumlahKelompok: kelompok.value,
+                status: "Belum Dimulai",
+                dataPemain: {}
+            }
         );
+
+        localStorage.setItem("kode_Kelass", kode);
+        localStorage.setItem("jumlahKelompok", kelompok.value);
+        localStorage.setItem("dataPemain", JSON.stringify([]));
+        localStorage.setItem("statusPermainan", "Belum Dimulai");
+
+        document.getElementById("tampilKode").innerHTML = kode;
+
+        buka("kode_Kelass");
+
+    } catch(error) {
+        console.error(error);
+        alert("Gagal membuat kelas. Periksa koneksi Firebase.");
     }
-
-    // =========================
-    // SIMPAN JUMLAH KELOMPOK
-    // =========================
-
-    localStorage.setItem(
-        "jumlahKelompok",
-        kelompok.value
-    );
-
-    // =========================
-    // TAMPILKAN KODE
-    // =========================
-
-    document.getElementById("tampilKode").innerHTML = kode;
-
-    // =========================
-    // LANGSUNG PINDAH HALAMAN
-    // =========================
-
-    buka("kode_Kelass");
-
 }
+
 
 </script>
 
@@ -5749,6 +5755,56 @@ function refreshDashboard(){
     const status = localStorage.getItem("statusPermainan") || "Belum Dimulai";
     const skorDashboard = document.getElementById("skorDashboard");
 
+
+    // ==============================
+    // HUBUNGKAN DASHBOARD KE FIREBASE
+    // ==============================
+
+    if (
+        kode !== "-" &&
+        window.onValue &&
+        window.database &&
+        window.dashboardListenerKode !== kode
+    ) {
+        window.dashboardListenerKode = kode;
+
+        window.onValue(
+            window.ref(window.database, "kelas/" + kode),
+            (snapshot) => {
+
+                if (!snapshot.exists()) return;
+
+                // Abaikan data dari room lama
+                if (localStorage.getItem("kode_Kelass") !== kode) return;
+
+                const dataKelas = snapshot.val();
+
+                localStorage.setItem(
+                    "jumlahKelompok",
+                    dataKelas.jumlahKelompok || 0
+                );
+
+                localStorage.setItem(
+                    "statusPermainan",
+                    dataKelas.status || "Belum Dimulai"
+                );
+
+                const daftarPemain = Object.values(
+                    dataKelas.dataPemain || {}
+                );
+
+                localStorage.setItem(
+                    "dataPemain",
+                    JSON.stringify(daftarPemain)
+                );
+
+                // Perbarui tampilan dashboard
+                refreshDashboard();
+            }
+        );
+    }
+
+
     // Ganti background sesuai jumlah kelompok
     if (jumlahKelompok == "4") {
         document.getElementById("bgDashboard").src = "dashboardguruu_Landscape.png";
@@ -5919,96 +5975,117 @@ function refreshDashboard(){
 
 }
 
-function mulaiPermainan(){
 
-    // Reset skor semua kelompok
+async function mulaiPermainan(){
+
+    const kode = localStorage.getItem("kode_Kelass");
+
+    if(!kode){
+        alert("Kode kelas tidak ditemukan!");
+        return;
+    }
+
     const jumlah =
         parseInt(localStorage.getItem("jumlahKelompok")) || 0;
 
-    for(let i = 1; i <= jumlah; i++){
-        localStorage.setItem("skorKelompok"+i, 0);
+    try {
+        for(let i = 1; i <= jumlah; i++){
+            localStorage.setItem("skorKelompok" + i, 0);
+        }
+
+        await window.update(
+            window.ref(window.database, "kelas/" + kode),
+            { status: "Sedang Berlangsung" }
+        );
+
+        localStorage.setItem("statusPermainan", "Sedang Berlangsung");
+
+        refreshDashboard();
+        alert("Permainan dimulai!");
+
+    } catch(error) {
+        console.error(error);
+        alert("Gagal memperbarui status permainan.");
     }
-
-    // Ubah status permainan
-    localStorage.setItem(
-        "statusPermainan",
-        "Sedang Berlangsung"
-    );
-
-    // Refresh dashboard
-    refreshDashboard();
-
-    alert("Permainan dimulai!");
-
 }
 
-function akhiriPermainan(){
+
+async function akhiriPermainan(){
 
     if(!confirm("Apakah Anda yakin ingin mengakhiri permainan?")){
         return;
     }
 
-    // Ubah status permainan
-    localStorage.setItem(
-        "statusPermainan",
-        "Permainan Selesai"
-    );
+    const kode = localStorage.getItem("kode_Kelass");
 
-    // Refresh Dashboard Guru
-    refreshDashboard();
+    try {
+        await window.update(
+            window.ref(window.database, "kelas/" + kode),
+            { status: "Permainan Selesai" }
+        );
 
-    alert("Permainan telah berakhir.");
+        localStorage.setItem("statusPermainan", "Permainan Selesai");
 
+        refreshDashboard();
+        alert("Permainan telah berakhir.");
+
+    } catch(error) {
+        console.error(error);
+        alert("Gagal memperbarui status permainan.");
+    }
 }
 
-    function resetRoom() {
+
+    async function resetRoom() {
         if (!confirm("Yakin ingin mereset room? Semua data permainan akan dihapus.")) {
             return;
         }
 
-        // Buat kode kelas baru
-        const kodeBaru = Math.random()
-            .toString(36)
-            .substring(2, 8)
-            .toUpperCase();
+        const kodeLama = localStorage.getItem("kode_Kelass");
+        const jumlah = parseInt(localStorage.getItem("jumlahKelompok")) || 6;
+        const kodeBaru = "ST" + Math.floor(1000 + Math.random() * 9000);
 
-        localStorage.setItem("kode_Kelass", kodeBaru);
+        try {
+            // Buat room baru di Firebase
+            await window.set(
+                window.ref(window.database, "kelas/" + kodeBaru),
+                {
+                    kode: kodeBaru,
+                    jumlahKelompok: jumlah,
+                    status: "Belum Dimulai",
+                    dataPemain: {}
+                }
+            );
 
-        // Reset data pemain
-        localStorage.setItem("dataPemain", JSON.stringify([]));
+            // Hapus room lama dari Firebase
+            if (kodeLama) {
+                await window.remove(
+                    window.ref(window.database, "kelas/" + kodeLama)
+                );
+            }
 
-        // Reset skor semua kelompok
-        const jumlah =
-            parseInt(localStorage.getItem("jumlahKelompok")) || 6;
+            localStorage.setItem("kode_Kelass", kodeBaru);
+            localStorage.setItem("dataPemain", JSON.stringify([]));
+            localStorage.setItem("statusPermainan", "Belum Dimulai");
 
             for (let i = 1; i <= jumlah; i++) {
                 localStorage.setItem("skorKelompok" + i, 0);
             }
 
-            // Reset status permainan
-            localStorage.setItem("statusPermainan", "Belum Dimulai");
+            const dataReset = [
+                "urutanGiliran", "giliranSekarang", "indexGiliran",
+                "posisiPemain", "sedangJalan", "skipGiliran",
+                "sudahKeluarStart", "giliran", "spinJumlahKelompok",
+                "spinKelompokSisa"
+            ];
 
-            // Hapus data permainan
-            localStorage.removeItem("urutanGiliran");
-            localStorage.removeItem("giliranSekarang");
-            localStorage.removeItem("indexGiliran");
-            localStorage.removeItem("posisiPemain");
-            localStorage.removeItem("sedangJalan");
-            localStorage.removeItem("skipGiliran");
-            localStorage.removeItem("sudahKeluarStart");
-            localStorage.removeItem("giliran");
+            dataReset.forEach(item => localStorage.removeItem(item));
 
-            // Hapus data Spin Giliran
-            localStorage.removeItem("spinJumlahKelompok");
-            localStorage.removeItem("spinKelompokSisa");
-
-            // Reset variabel spin
             daftarSisa = [];
             daftarUrutan = [];
             sudutRoda = 0;
             rodaSedangBerputar = false;
 
-            // Tutup roda spin jika masih terbuka
             if (lapisanRoda) {
                 lapisanRoda.remove();
                 lapisanRoda = null;
@@ -6017,10 +6094,15 @@ function akhiriPermainan(){
             canvasRoda = null;
             ctxRoda = null;
 
-            // Perbarui dashboard
+            window.dashboardListenerKode = null;
             refreshDashboard();
 
-            alert("Room berhasil direset! Spin Giliran siap digunakan kembali.");
+            alert("Room berhasil direset! Kode kelas baru: " + kodeBaru);
+
+        } catch (error) {
+            console.error(error);
+            alert("Gagal mereset room di Firebase. Periksa koneksi internet.");
+        }
     }
 
 // JANGAN langsung dipanggil di sini
@@ -6750,7 +6832,7 @@ function tombolKembaliMateri(){
         </figure>
 
         <p>
-            Melalui Seren Taun, peserta didik dapat memahami bahwa tradisi budaya tidak hanya berkaitan dengan adat istiadat, tetapi juga mencerminkan hubungan antara manusia dan lingkungan. Dalam Tradisi Seren Taun ini terdapat berbagai aktivitas yang berkaitan dengan konsep IPA, seperti menjaga keseimbangan ekosistem dan pelestarian lingkungan yang termasuk dalam materi interaksi makhluk hidup, penggunaan sumber daya alam yang bijak serta pemanfaatan bahan-bahan alami yang berkaitan dengan jenis dan sifat zat, hingga keterkaitan musim tanam dan kondisi cuaca yang berhubungan dengan perubahan iklim dan dampaknya terhadap kehidupan. Tradisi Seren Taun dapat dijadikan sebagai konteks pembelajaran IPA terpadu yang relevan dengan kehidupan sehari-hari peserta didik sekaligus membantu menanamlan nilai kepedulian terhadap lingkungan. 
+            Melalui Seren Taun, peserta didik dapat memahami bahwa tradisi budaya tidak hanya berkaitan dengan adat istiadat, tetapi juga mencerminkan hubungan antara manusia dan lingkungan. Dalam Tradisi Seren Taun ini terdapat berbagai aktivitas yang berkaitan dengan konsep IPA, seperti menjaga keseimbangan ekosistem dan pelestarian lingkungan yang termasuk dalam materi interaksi makhluk hidup, penggunaan sumber daya alam yang bijak serta pemanfaatan bahan-bahan alami yang berkaitan dengan jenis dan sifat zat, hingga keterkaitan musim tanam dan kondisi cuaca yang berhubungan dengan perubahan iklim dan dampaknya terhadap kehidupan. Tradisi Seren Taun dapat dijadikan sebagai konteks pembelajaran IPA terpadu yang relevan dengan kehidupan sehari-hari peserta didik sekaligus membantu menanamkan nilai kepedulian terhadap lingkungan. 
         </p>
 
         <!-- VIDEO PERUBAHAN IKLIM -->
@@ -6797,7 +6879,7 @@ function tombolKembaliMateri(){
         <h3>a. Komponen Biotik dan Abiotik dalam Ekosistem</h3>
 
         <p>
-            Keseimbangan ekosistem merupakan kondisi ketika komponen biotik dan abiotik dalam suatu lingkungan berada dalam keadaan yang relatif stabil sehingga proses ekologis seperti aliran energi dan siklum materi dapat berlangsung secara berkelanjutan. Keseimbangan memungkinkan ekosistem mempertahanlan kelangsungan hidup berbagai jenis makhluk hidup serta menjaga kestabilan lingkungan dalam jangka panjang (Haya et al., 2025). Menurut Begon, Townsend, dan Harper dalam buku Ecology: From Individuals to Ecosystems, keseimbangan ekosistem sangat dipengaruhi oleh interaksi antarorganisme serta hubungan antara organisme dengan lingkungannya (Begon, Townsend & Harper, 2006). Komponen biotik seperti tumbuhan, hewan, dan mikroorganisme berinteraksi dengan komponen abiotik seperti tanah, air, udara, cahaya matahari, dan suhu sehingga membentuk suatu sistem ekologis yang dinamis. Hubungan antara komponen biotik dan abiotik menjadi faktor penting dalam menjaga keseimbangan suatu ekosistem (Enquist et al., 2015).
+            Keseimbangan ekosistem merupakan kondisi ketika komponen biotik dan abiotik dalam suatu lingkungan berada dalam keadaan yang relatif stabil sehingga proses ekologis seperti aliran energi dan siklus materi dapat berlangsung secara berkelanjutan. Keseimbangan memungkinkan ekosistem mempertahankan kelangsungan hidup berbagai jenis makhluk hidup serta menjaga kestabilan lingkungan dalam jangka panjang (Haya et al., 2025). Menurut Begon, Townsend, dan Harper dalam buku Ecology: From Individuals to Ecosystems, keseimbangan ekosistem sangat dipengaruhi oleh interaksi antarorganisme serta hubungan antara organisme dengan lingkungannya (Begon, Townsend & Harper, 2006). Komponen biotik seperti tumbuhan, hewan, dan mikroorganisme berinteraksi dengan komponen abiotik seperti tanah, air, udara, cahaya matahari, dan suhu sehingga membentuk suatu sistem ekologis yang dinamis. Hubungan antara komponen biotik dan abiotik menjadi faktor penting dalam menjaga keseimbangan suatu ekosistem (Enquist et al., 2015).
         </p>
 
         <figure class="gambarBox">
@@ -6811,7 +6893,7 @@ function tombolKembaliMateri(){
         </figure>
 
         <p>
-            Hubungan antara komponen biotik dan abiotik dapat ditemukan dalam praktik pertanian tradisional yang berkaitan dengan Tradisi Seren Taun. Dalam proses penanaman padi, masyarakat memanfaatkan unsur-unsur abiotik seperti tanah, air, cahaya matahari, udara dan kondisi cuaca untuk mendukung pertumbuhan tanaman padi sebagai komponen biotik utama dalam ekosistem sawah. Selain tanaman padi, terdapat juga organisme lain seperti serangga, burung, cacing, dan mikroorganisme tanah yang berperan dalam menjaga keseimbangan ekosistem pertanian. Hubungan antara komponen biotik dan abiotik tersebut menunjukkan bahwa keberhasilan pertanian tardisional sangat dipengaruhi oleh kondisi lingkungan yang seimbang. Melalui praktik pertanian yang diwariskan secara turun-temurun dalam Tradisi Seren Taun, masyarakat menunjukkan adanya upaya menjaga keselarasan antara manusia dan alam agar berkelanjutan lingkungan tetap terpelihara (Triana & Andi, 2023).
+            Hubungan antara komponen biotik dan abiotik dapat ditemukan dalam praktik pertanian tradisional yang berkaitan dengan Tradisi Seren Taun. Dalam proses penanaman padi, masyarakat memanfaatkan unsur-unsur abiotik seperti tanah, air, cahaya matahari, udara dan kondisi cuaca untuk mendukung pertumbuhan tanaman padi sebagai komponen biotik utama dalam ekosistem sawah. Selain tanaman padi, terdapat juga organisme lain seperti serangga, burung, cacing, dan mikroorganisme tanah yang berperan dalam menjaga keseimbangan ekosistem pertanian. Hubungan antara komponen biotik dan abiotik tersebut menunjukkan bahwa keberhasilan pertanian tradisional sangat dipengaruhi oleh kondisi lingkungan yang seimbang. Melalui praktik pertanian yang diwariskan secara turun-temurun dalam Tradisi Seren Taun, masyarakat menunjukkan adanya upaya menjaga keselarasan antara manusia dan alam agar berkelanjutan lingkungan tetap terpelihara (Triana & Andi, 2023).
         </p>
 
         <hr>
@@ -6845,7 +6927,7 @@ function tombolKembaliMateri(){
         </p>
 
         <p>
-            Keseimbangan ekosistem juga dapat ditemukan dalam sistem pertanian tardisional yang berkaitan dengan Tradisi Seren Taun. Masyarakat adat berupaya menjaga keseimbangan lingkungan melalui pengelolaan lahan pertanian secara bijak, menjaga kesuburan tanah, serta memanfaatkan sumber daya alam sesuai kebutuhan agar ekosistem sawah tetap stabil. Praktik tersebut menunjukkan adanya kesadaran masyarakat dalam mengurangi kerusakan lingkungan akibat aktivitas manusia yang berlebihan. Nilai-nilai kearifan lokal yang terdapat dalam Tradisi Seren Taun mencerminkan upaya masyarakat dalam menjaga hubungan harmonis antara manusia dan alam sehingga keberlanjutan lingkungan dapat tetap terpelihara (Amalia & Haryana, 2023).
+            Keseimbangan ekosistem juga dapat ditemukan dalam sistem pertanian tradisional yang berkaitan dengan Tradisi Seren Taun. Masyarakat adat berupaya menjaga keseimbangan lingkungan melalui pengelolaan lahan pertanian secara bijak, menjaga kesuburan tanah, serta memanfaatkan sumber daya alam sesuai kebutuhan agar ekosistem sawah tetap stabil. Praktik tersebut menunjukkan adanya kesadaran masyarakat dalam mengurangi kerusakan lingkungan akibat aktivitas manusia yang berlebihan. Nilai-nilai kearifan lokal yang terdapat dalam Tradisi Seren Taun mencerminkan upaya masyarakat dalam menjaga hubungan harmonis antara manusia dan alam sehingga keberlanjutan lingkungan dapat tetap terpelihara (Amalia & Haryana, 2023).
         </p>
 
         <hr>
