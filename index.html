@@ -5186,47 +5186,36 @@ function kembaliMenu(){
 <script>
 
 
-async function buatKelas(){
 
+function buatKelas() {
     const kelompok = document.querySelector(
         'input[name="jumlahKelompok"]:checked'
     );
 
-    if(!kelompok){
+    if (!kelompok) {
         alert("Pilih jumlah kelompok!");
         return;
     }
 
-    const kode =
-        "ST" + Math.floor(1000 + Math.random() * 9000);
+    const kode = "ST" + Math.floor(1000 + Math.random() * 9000);
 
-    try {
-        await window.set(
-            window.ref(window.database, "kelas/" + kode),
-            {
-                kode: kode,
-                jumlahKelompok: kelompok.value,
-                status: "Belum Dimulai",
-                dataPemain: {}
-            }
-        );
+    localStorage.setItem("kode_Kelass", kode);
+    localStorage.setItem("jumlahKelompok", kelompok.value);
+    localStorage.setItem("dataPemain", JSON.stringify([]));
+    localStorage.setItem("statusPermainan", "Belum Dimulai");
 
-        localStorage.setItem("kode_Kelass", kode);
-        localStorage.setItem("jumlahKelompok", kelompok.value);
-        localStorage.setItem("dataPemain", JSON.stringify([]));
-        localStorage.setItem("statusPermainan", "Belum Dimulai");
-
-        document.getElementById("tampilKode").innerHTML = kode;
-
-        buka("kode_Kelass");
-
-    } catch(error) {
-        console.error(error);
-        alert("Gagal membuat kelas. Periksa koneksi Firebase.");
+    for (let i = 1; i <= parseInt(kelompok.value); i++) {
+        localStorage.setItem("skorKelompok" + i, 0);
     }
+
+    // Cegah listener Firebase berjalan pada sesi lokal
+    window.dashboardListenerKode = kode;
+
+    document.getElementById("tampilKode").innerHTML = kode;
+
+    buka("kode_Kelass");
+    refreshDashboard();
 }
-
-
 </script>
 
 <!-- KODE KELAS -->
