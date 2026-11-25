@@ -4529,7 +4529,11 @@ function tutupUST() {
     document.getElementById("popupUST").style.display = "none";
 }
 
-document.addEventListener("DOMContentLoaded", pasangKolomJawabanEsai);
+document.addEventListener("DOMContentLoaded", function() {
+    if (typeof pasangKolomJawabanEsai === "function") {
+        pasangKolomJawabanEsai();
+    }
+});
 
 function gantiLayoutPapan(){
 
